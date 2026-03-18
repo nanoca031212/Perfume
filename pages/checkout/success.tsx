@@ -6,7 +6,6 @@ import { useCart } from '@/contexts/CartContext'
 
 interface ProcessingStatus {
   stripe_data: 'loading' | 'success' | 'error';
-  shopify_order: 'loading' | 'success' | 'error';
   utm_tracking: 'loading' | 'success' | 'error';
 }
 
@@ -17,7 +16,6 @@ export default function CheckoutSuccess() {
   const [processing, setProcessing] = useState(false)
   const [processingStatus, setProcessingStatus] = useState<ProcessingStatus>({
     stripe_data: 'loading',
-    shopify_order: 'loading',
     utm_tracking: 'loading'
   })
   const [orderDetails, setOrderDetails] = useState<any>(null)
@@ -59,33 +57,12 @@ export default function CheckoutSuccess() {
       
       console.log('✅ Dados do Stripe recuperados:', stripeData.data)
 
-      // 2. Enviar pedido para Shopify
-      console.log('📦 Enviando pedido para Shopify...')
-      setProcessingStatus(prev => ({ ...prev, shopify_order: 'loading' }))
-      
-      const shopifyResponse = await fetch('/api/shopify/create-order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ orderData: stripeData.data }),
-      })
-
-      if (shopifyResponse.ok) {
-        const shopifyData = await shopifyResponse.json()
-        console.log('✅ Pedido criado no Shopify:', shopifyData)
-        setProcessingStatus(prev => ({ ...prev, shopify_order: 'success' }))
-      } else {
-        console.warn('⚠️ Falha ao criar pedido no Shopify (continuando...)')
-        setProcessingStatus(prev => ({ ...prev, shopify_order: 'error' }))
-      }
-
       // 3. Processar tracking UTM (se disponível)
       setProcessingStatus(prev => ({ ...prev, utm_tracking: 'loading' }))
       
-      if (stripeData.data.utm_params && Object.values(stripeData.data.utm_params).some(v => v)) {
-        console.log('📊 Processando tracking UTM:', stripeData.data.utm_params)
-        // Aqui você pode adicionar lógica adicional de tracking se necessário
+      const utms = stripeData.data.utm_params || {};
+      if (Object.values(utms).some(v => v)) {
+        console.log('📊 Processando tracking UTM:', utms)
         setProcessingStatus(prev => ({ ...prev, utm_tracking: 'success' }))
       } else {
         console.log('ℹ️ Nenhum UTM encontrado')
@@ -97,7 +74,6 @@ export default function CheckoutSuccess() {
       setError(error.message)
       setProcessingStatus({
         stripe_data: 'error',
-        shopify_order: 'error',
         utm_tracking: 'error'
       })
     } finally {
@@ -157,13 +133,6 @@ export default function CheckoutSuccess() {
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-blue-700">Criação no Shopify</span>
-                <div className="flex items-center gap-2">
-                  {getStatusIcon(processingStatus.shopify_order)}
-                  <span className="text-xs text-blue-600">{getStatusText(processingStatus.shopify_order)}</span>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
                 <span className="text-sm text-blue-700">Tracking UTM</span>
                 <div className="flex items-center gap-2">
                   {getStatusIcon(processingStatus.utm_tracking)}
@@ -184,6 +153,21 @@ export default function CheckoutSuccess() {
               <div>Itens: {orderDetails.line_items.length}</div>
               {orderDetails.utm_params.utm_source && (
                 <div>UTM Source: {orderDetails.utm_params.utm_source}</div>
+              )}
+              {orderDetails.utm_params.utm_medium && (
+                <div>UTM Medium: {orderDetails.utm_params.utm_medium}</div>
+              )}
+              {orderDetails.utm_params.utm_campaign && (
+                <div>UTM Campaign: {orderDetails.utm_params.utm_campaign}</div>
+              )}
+              {orderDetails.utm_params.src && (
+                <div>SRC: {orderDetails.utm_params.src}</div>
+              )}
+              {orderDetails.utm_params.sck && (
+                <div>SCK: {orderDetails.utm_params.sck}</div>
+              )}
+              {orderDetails.utm_params.xcod && (
+                <div>XCOD: {orderDetails.utm_params.xcod}</div>
               )}
             </div>
           </div>

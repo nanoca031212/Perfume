@@ -57,6 +57,9 @@ export default async function handler(
         utm_campaign: session.metadata?.utm_campaign || null,
         utm_content: session.metadata?.utm_content || null,
         utm_term: session.metadata?.utm_term || null,
+        src: session.metadata?.src || null,
+        sck: session.metadata?.sck || null,
+        xcod: session.metadata?.xcod || null,
       },
       created: session.created,
       payment_intent_id: typeof session.payment_intent === 'object'
@@ -64,10 +67,14 @@ export default async function handler(
         : session.payment_intent,
     };
 
-    // Simular o Webhook do Stripe para o Backend Local (CRM)
-    // Isso é necessário porque o Stripe não envia webhooks para o localhost
+    // Simular o Webhook do Stripe para o Backend Local (CRM/UTMify)
+    // Isso é necessário porque o Stripe não envia webhooks para o localhost sem o CLI
     try {
-      await fetch('http://localhost:3000/api/webhooks/stripe', {
+      const protocol = req.headers['x-forwarded-proto'] || 'http';
+      const host = req.headers.host || 'localhost:3000';
+      const webhookUrl = `${protocol}://${host}/api/stripe/webhook`;
+      
+      await fetch(webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -75,9 +82,9 @@ export default async function handler(
           data: { object: session }
         })
       });
-      console.log('✅ Evento de checkout enviado para o CRM Backend local (localhost:3000)');
+      console.log(`✅ Evento de checkout enviado para o webhook local: ${webhookUrl}`);
     } catch (e: any) {
-      console.warn('⚠️ Não foi possível sincronizar com o CRM (backend-leads) na porta 3000:', e.message);
+      console.warn('⚠️ Não foi possível sincronizar com o webhook local:', e.message);
     }
 
     console.log('📊 Dados da sessão Stripe recuperados:', {

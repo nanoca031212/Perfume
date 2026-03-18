@@ -831,19 +831,6 @@ export default function WWESummerSlamQuiz() {
   const handleBuyNowClick = (selectedKit: string) => {
     trackQuizStep('go_to_store'); // Evento final - ir para a loja
 
-    // Adicionar item ao carrinho
-    addItem({
-      id: 999, // ID especial para o kit do quiz
-      handle: 'luxury-perfumes-kit',
-      title: '3 Luxury Perfumes – Exclusive Online Kit',
-      subtitle: 'Premium Collection',
-      price: 79.99,
-      image: '/3-caixas.png'
-    });
-
-    // Garantir que o carrinho esteja fechado para não atrapalhar a navegação
-    setIsOpen(false);
-
     // Redirecionar para a loja
     router.push('/');
   }
