@@ -144,7 +144,7 @@ export default function PriceAnchoring({ correctAnswers, onBuyClick }: PriceAnch
 
 
       <div className="pt-6">
-        <h3 className="text-center text-[#2c2c2c] text-2xl font-bold font-sans mb-2 uppercase underline">Perfumes we have in stock:</h3>
+        <h3 className="text-center text-[#2c2c2c] text-2xl font-bold font-sans mb-2 uppercase underlinen">Perfumes we have in stock:</h3>
 
         <div className="w-full overflow-hidden bg-white">
           <div className="relative">

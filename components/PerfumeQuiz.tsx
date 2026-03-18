@@ -967,7 +967,7 @@ export default function WWESummerSlamQuiz() {
 
           <div className="w-full max-w-2xl mx-auto space-y-18">
             <div className="animate-fadeIn">
-              <div className="flex justify-between mt-18 px-7">
+              <div className="flex justify-between mt-5 px-7">
                 <div className="text-center">
                   <p className="text-xl text-gray-600">Your discount</p>
                   <p className={`text-2xl font-bold text-[#1bca32] transform transition-all duration-500 ${correctAnswers > 0 ? 'scale-125 animate-pulse' : ''
@@ -986,7 +986,7 @@ export default function WWESummerSlamQuiz() {
               </div>
             </div>
 
-            <div className="space-y-8">
+            <div className="space-y-5">
               <div className="animate-slideIn">
                 {questions[currentQuestion] && (
                   <div className="bg-white shadow-sm transition-all duration-300 mb-4">
