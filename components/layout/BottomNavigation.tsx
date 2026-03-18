@@ -105,7 +105,7 @@ export default function BottomNavigation({ className = '' }: BottomNavigationPro
     <>
       <nav
         className={`fixed bottom-0 left-0 right-0 bg-gray-chip border-t border-gray-200 
-                 transition-transform duration-300 z-50 ${isVisible ? 'translate-y-0 mb-5' : 'translate-y-full'
+                 transition-transform duration-300 z-50 ${isVisible ? 'translate-y-0' : 'translate-y-full'
           } ${className}`}
       >
         <div className="container mx-auto px-4">

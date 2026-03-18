@@ -98,31 +98,53 @@ export default function PriceAnchoring({ correctAnswers, onBuyClick }: PriceAnch
       <div className="flex justify-center mb-6"><span className="text-sm text-wrap text-center text-gray-500 px-4">You've successfully completed our quiz and secured a £{discount} discount on this exclusive online bundle.</span></div>
 
 
-
-
       {/* New Temu-style Layout */}
-      <div className="flex items-center bg-white justify-start gap-2 mb-2 border border-gray-200">
-        <div className="w-25 h-25 overflow-hidden">
-          <Image
-            src="/3-caixas.png"
-            alt="temu box"
-            width={80}
-            height={80}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="text-left ml-1">
-          <p className="text-sm text-black">Original Price</p>
-          <p className="text-lg line-through font-bold text-[#f73e3e]">£{selectedKitData.originalPrice.toFixed(2)}</p>
-        </div>
-        <div className="text-right flex items-center gap-2 px-4">
-          <span className="block text-3xl font-semibold text-green-600 underline">£{finalPrice.toFixed(2)}</span>
+      {/* Premium Price Anchoring Card */}
+      <div className="relative overflow-hidden rounded-2xl border mx-7 border-gray-200/50 bg-gradient-to-br from-white/80 to-gray-50/50 py-4 shadow-2xl backdrop-blur-sm mb-8 animate-fadeIn group">
+        {/* Shimmer effect */}
+        <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12" />
+
+        <div className="flex flex-col md:flex-row items-center gap-6 relative z-10">
+          {/* Image Container with Badge */}
+          <div className="relative w-32 h-32 flex-shrink-0">
+            <div className="w-full h-full rounded-xl overflow-hidden border-2 border-white shadow-inner bg-white">
+              <Image
+                src="/3-caixas.png"
+                alt="Premium Perfume Set"
+                width={128}
+                height={128}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+            </div>
+          </div>
+
+          {/* Pricing Info */}
+          <div className="flex-grow text-center md:text-left space-y-2">
+            <h2 className="text-gray-500 text-xs font-bold uppercase tracking-widest">Your Special Reward</h2>
+            <div className="items-baseline flex-col col-1 justify-center md:justify-start gap-3">
+              <span className="text-4xl font-extrabold text-black tracking-tight border-b-2 border-red-500">£{finalPrice.toFixed(2)}</span>
+              <span className="text-x text-gray-400 line-through font-medium pl-2 border-b-2 border-black pb-1">/£{selectedKitData.originalPrice.toFixed(2)}</span>
+              <div className="flex flex-col mt-4">
+                <span className="text-xs text-green-600 font-bold bg-green-50 px-2 py-0.5 rounded-full inline-block">SAVE £{selectedKitData.savings.toFixed(2)}</span>
+              </div>
+            </div>
+            <p className="text-gray-600 text-sm font-medium">3 Luxury Perfumes – Exclusive Online Kit's</p>
+          </div>
+
+          {/* Trust Badge */}
+          <div className="flex flex-col items-center md:items-end gap-1">
+            <div className="flex text-yellow-500">
+              {[1, 2, 3, 4, 5].map((s) => (
+                <svg key={s} className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
 
       <div className="pt-6">
-        <h3 className="text-center text-[#2c2c2c] text-2xl font-bold font-sans mb-2">Perfumes we still have in stock:</h3>
+        <h3 className="text-center text-[#2c2c2c] text-2xl font-bold font-sans mb-2 uppercase underline">Perfumes we have in stock:</h3>
 
         <div className="w-full overflow-hidden bg-white">
           <div className="relative">

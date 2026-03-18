@@ -150,7 +150,7 @@ export default function CheckoutPage() {
                                     <h3 className="font-medium text-gray-900">{item.title}</h3>
                                     <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
                                     <div className="flex items-center gap-2 mt-1">
-                                        <span className="text-xs line-through text-gray-400">£{(item.originalPrice || 200.00).toFixed(2)}</span>
+                                        <span className="text-xs line-through text-gray-400">£{(item.originalPrice || 200.00).toFixed(2)}</span>                                                                               
                                     </div>
                                 </div>
                                 <div className="text-right">

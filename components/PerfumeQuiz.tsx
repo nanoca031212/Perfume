@@ -966,16 +966,23 @@ export default function WWESummerSlamQuiz() {
           <SuccessNotification show={showNotification} onClose={() => setShowNotification(false)} />
 
           <div className="w-full max-w-2xl mx-auto space-y-18">
-            <div className="mb-6 animate-fadeIn">
-              <div className="flex justify-center mb-6">
+            <div className="animate-fadeIn">
+              <div className="flex justify-between mt-18 px-7">
                 <div className="text-center">
-                  <p className="text-sm text-gray-600">Your discount</p>
+                  <p className="text-xl text-gray-600">Your discount</p>
                   <p className={`text-2xl font-bold text-[#1bca32] transform transition-all duration-500 ${correctAnswers > 0 ? 'scale-125 animate-pulse' : ''
                     }`}>
                     £{(correctAnswers === 6 ? 120.01 : correctAnswers * 20).toFixed(2)}
                   </p>
                   <p className="text-xs text-gray-500">Participation reward</p>
                 </div>
+                <Image
+                  src="/3-caixas.png"
+                  alt="Perfume Kit"
+                  width={100}
+                  height={100}
+                  className="w-25 h-25 object-cover rounded-lg border border-[#f00]"
+                />
               </div>
             </div>
 
@@ -1023,7 +1030,7 @@ const DiscountProgressBar = ({ correctAnswers }: { correctAnswers: number }) => 
   const progressPercentage = (discount / maxDiscount) * 100;
 
   return (
-    <div className="p-4 rounded-lg">
+    <div className="p-4 rounded-lg mb-20">
       <div className="flex justify-between items-center">
         <span className="text-sm text-gray-600">Discount progress:</span>
         <div>
