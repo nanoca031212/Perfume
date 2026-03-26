@@ -22,8 +22,8 @@ const kits: Kit[] = [
     name: "3 Luxury Perfumes – Exclusive Online Kit",
     wrestler: "Premium",
     price: 49.99,
-    originalPrice: 179.99,
-    savings: 130.00,
+    originalPrice: 169.99,
+    savings: 120.00,
     description: "3 Premium Fragrance Collection",
     items: [
       "Elegant Rose & Bergamot (50ml)",
@@ -100,27 +100,43 @@ export default function PriceAnchoring({ correctAnswers, onBuyClick }: PriceAnch
 
       {/* New Temu-style Layout */}
       {/* Premium Price Anchoring Card */}
-      <div className="relative overflow-hidden rounded-2xl border mx-7 border-gray-200/50 bg-gradient-to-br from-white/80 to-gray-50/50 py-4 shadow-2xl backdrop-blur-sm mb-8 animate-fadeIn group">
+      <div className="relative overflow-hidden rounded-2xl border mx-7 px-4 border-gray-200/50 bg-gradient-to-br from-gray-50/80 to-gray-50/50 py-4 shadow-2xl backdrop-blur-sm mb-8 animate-fadeIn group">
         {/* Shimmer effect */}
         <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12" />
 
         <div className="flex flex-col md:flex-row items-center gap-6 relative z-10">
-          {/* Image Container with Badge */}
-          <div className="relative w-32 h-32 flex-shrink-0">
-            <div className="w-full h-full rounded-xl overflow-hidden border-2 border-white shadow-inner bg-white">
-              <Image
-                src="/3-caixas.png"
-                alt="Premium Perfume Set"
-                width={128}
-                height={128}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              />
+          <div className="w-full overflow-hidden bg-white">
+            <div className="relative">
+              <div
+                className="flex transition-none"
+                style={{
+                  transform: `translateX(${carouselOffset}px)`,
+                  width: '7656px' // Adjusted for 11 images: 11 * 232px * 3 cycles = 7656px
+                }}
+              >
+                {/* Create infinite loop by repeating the pattern multiple times */}
+                {Array.from({ length: 3 }, (_, cycleIndex) =>
+                  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((item, index) => (
+                    <div key={`${cycleIndex}-${index}`} className="flex-shrink-0 mr-8">
+                      <div className="w-[200px] h-[200px] md:w-[200px] md:h-[200px] sm:w-[150px] sm:h-[150px]">
+                        <Image
+                          src={`/per${item}.png`}
+                          alt={`Perfume ${item}`}
+                          width={200}
+                          height={200}
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                      </div>
+                    </div>
+                  ))
+                ).flat()}
+              </div>
             </div>
           </div>
 
           {/* Pricing Info */}
           <div className="flex-grow text-center md:text-left space-y-2">
-            <h2 className="text-gray-500 text-xs font-bold uppercase tracking-widest">Your Special Reward</h2>
+            <h2 className="text-gray-500 text-xs font-bold uppercase tracking-widest">Your Quiz Reward</h2>
             <div className="items-baseline flex-col col-1 justify-center md:justify-start gap-3">
               <span className="text-4xl font-extrabold text-black tracking-tight border-b-2 border-red-500">£{finalPrice.toFixed(2)}</span>
               <span className="text-x text-gray-400 line-through font-medium pl-2 border-b-2 border-black pb-1">/£{selectedKitData.originalPrice.toFixed(2)}</span>
@@ -132,45 +148,11 @@ export default function PriceAnchoring({ correctAnswers, onBuyClick }: PriceAnch
           </div>
 
           {/* Trust Badge */}
-          <div className="flex flex-col items-center md:items-end gap-1">
+          <div className="flex flex-col items-center md:items-end gap-1 bg-gray-200 px-2 rounded-lg">
             <div className="flex text-yellow-500">
               {[1, 2, 3, 4, 5].map((s) => (
                 <svg key={s} className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
               ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-      <div className="pt-6">
-        <h3 className="text-center text-[#2c2c2c] text-2xl font-bold font-sans mb-2 uppercase underlinen">Perfumes we have in stock:</h3>
-
-        <div className="w-full overflow-hidden bg-white">
-          <div className="relative">
-            <div
-              className="flex transition-none"
-              style={{
-                transform: `translateX(${carouselOffset}px)`,
-                width: '7656px' // Adjusted for 11 images: 11 * 232px * 3 cycles = 7656px
-              }}
-            >
-              {/* Create infinite loop by repeating the pattern multiple times */}
-              {Array.from({ length: 3 }, (_, cycleIndex) =>
-                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((item, index) => (
-                  <div key={`${cycleIndex}-${index}`} className="flex-shrink-0 mr-8">
-                    <div className="w-[200px] h-[200px] md:w-[200px] md:h-[200px] sm:w-[150px] sm:h-[150px]">
-                      <Image
-                        src={`/per${item}.png`}
-                        alt={`Perfume ${item}`}
-                        width={200}
-                        height={200}
-                        className="w-full h-full object-cover rounded-lg"
-                      />
-                    </div>
-                  </div>
-                ))
-              ).flat()}
             </div>
           </div>
         </div>
@@ -186,9 +168,13 @@ export default function PriceAnchoring({ correctAnswers, onBuyClick }: PriceAnch
           <div className="mt-6">
             <button
               onClick={() => onBuyClick(selectedKit)}
-              className="w-full bg-[#18d431] hover:bg-[#33ff00] shadow-xl shadow-gray-500/35 hover:shadow-green-200 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 flex items-center justify-center gap-2"
+              className="w-full bg-black hover:bg-gray-500 shadow-xl shadow-gray-500/35 hover:shadow-green-200 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 flex items-center justify-center gap-2"
             >
-              Buy Now – Get This Perfume Kit
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+              </svg> Go to store
             </button>
           </div>
         )}

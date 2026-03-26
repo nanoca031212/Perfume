@@ -166,7 +166,7 @@ export default function ProductCardTPS({ product, className = '', priority = fal
             <div className="flex flex-col">
               <div className="flex items-center gap-2 text-sm mt-1">
                 <span className="text-gray-500">£{formatPrice(product.price.regular)}</span>
-                <span className="text-vetps-red font-bold">Save £120.01</span>
+                <span className="text-vetps-red font-bold">Save £120.00</span>
               </div>
             </div>
 

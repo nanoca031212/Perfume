@@ -219,7 +219,7 @@ const SuccessNotification = ({ show, onClose }: { show: boolean; onClose: () => 
         : "translate-x-full opacity-0 scale-95"
         }`}
     >
-      <div className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center space-x-3 border border-green-400 backdrop-blur-sm">
+      <div className="bg-gradient-to-r from-black to-[#303030] text-white px-6 py-4 rounded-xl shadow-2xl flex items-center space-x-3 border border-gray-500 backdrop-blur-sm">
         <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
           <DollarSign className="h-8 w-8 text-green-500 animate-bounce" />
         </div>
@@ -696,7 +696,7 @@ const CompleteHeader = ({ onUSPClick }: { onUSPClick: () => void }) => {
       <div className="w-full bg-[#e7071d] border-b border-gray-200 transition-colors duration-200 py-2 group">
         <div className="flex items-center justify-center space-x-2 px-4">
           <div className="text-sm font-medium text-[#ffffff] uppercase tracking-wide">
-            Take the perfume quiz and get up to £120.01 off
+            Take the perfume quiz and get up to £120.00 off
           </div>
         </div>
       </div>
@@ -868,8 +868,8 @@ export default function WWESummerSlamQuiz() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const discount = correctAnswers === 6 ? 130.00 : correctAnswers * 20
-  const originalPrice = 179.99
+  const discount = correctAnswers === 6 ? 120.00 : correctAnswers * 20
+  const originalPrice = 169.99
   const finalPrice = Math.max(originalPrice - discount, 49.99)
 
   useTrackVSLView(); // Comentado junto com o VSL
@@ -902,7 +902,7 @@ export default function WWESummerSlamQuiz() {
 
                 <div className="bg-black font-product-sans border-[2px] border-[#f00] p-3 shadow-sm animate-slideIn animated-border">
                   <blockquote className="text-xl md:text-lg text-[#ffffff] text-center leading-relaxed">
-                    "Answer 6 questions about your perfume preferences and get £120.01 off a set of perfumes."
+                    "Answer 6 questions about your perfume preferences and get £120.00 off a set of perfumes."
                   </blockquote>
                 </div>
 
@@ -967,22 +967,14 @@ export default function WWESummerSlamQuiz() {
 
           <div className="w-full max-w-2xl mx-auto space-y-18">
             <div className="animate-fadeIn">
-              <div className="flex justify-between mt-5 px-7">
-                <div className="text-center">
-                  <p className="text-xl text-gray-600">Your discount</p>
-                  <p className={`text-2xl font-bold text-[#1bca32] transform transition-all duration-500 ${correctAnswers > 0 ? 'scale-125 animate-pulse' : ''
-                    }`}>
-                    £{(correctAnswers === 6 ? 120.01 : correctAnswers * 20).toFixed(2)}
-                  </p>
-                  <p className="text-xs text-gray-500">Participation reward</p>
-                </div>
-                <Image
-                  src="/3-caixas.png"
-                  alt="Perfume Kit"
-                  width={100}
-                  height={100}
-                  className="w-25 h-25 object-cover rounded-lg border border-[#f00]"
-                />
+
+              <div className="text-center">
+                <p className="text-xl text-gray-600">Your discount</p>
+                <p className={`text-2xl font-bold text-[#1bca32] transform transition-all duration-500 ${correctAnswers > 0 ? 'scale-125 animate-pulse' : ''
+                  }`}>
+                  £{(correctAnswers === 6 ? 120.00 : correctAnswers * 20).toFixed(2)}
+                </p>
+                <p className="text-xs text-gray-500">Participation reward</p>
               </div>
             </div>
 
@@ -1025,8 +1017,8 @@ export default function WWESummerSlamQuiz() {
 
 // Discount progress bar component
 const DiscountProgressBar = ({ correctAnswers }: { correctAnswers: number }) => {
-  const discount = correctAnswers === 6 ? 120.01 : correctAnswers * 20;
-  const maxDiscount = 120.01;
+  const discount = correctAnswers === 6 ? 120.00 : correctAnswers * 20;
+  const maxDiscount = 120.00;
   const progressPercentage = (discount / maxDiscount) * 100;
 
   return (
