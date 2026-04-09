@@ -59,9 +59,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose, products }) => {
 
   useEffect(() => {
     if (searchTerm.length === 0) {
-      const featuredProducts = products
-        .filter(product => product.featured || product.onSale)
-        .slice(0, 6);
+      // Show top brands and some products
+      const featuredProducts = products.slice(0, 10);
       setFilteredProducts(featuredProducts);
       setSuggestions([]);
     } else {
@@ -73,7 +72,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose, products }) => {
           product.title.toLowerCase().includes(term) ||
           product.description.toLowerCase().includes(term) ||
           product.brands?.some(brand => brand.toLowerCase().includes(term)) ||
-          (product.gender && product.gender.toLowerCase().includes(term))
+          product.primary_brand?.toLowerCase().includes(term) ||
+          product.tags?.some(tag => tag.toLowerCase().includes(term))
         ));
       });
       setFilteredProducts(results);
@@ -81,138 +81,172 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose, products }) => {
     }
   }, [searchTerm, products]);
 
+  // Extract unique brands
+  const allBrands = Array.from(new Set(
+    products.flatMap(p => p.brands || [p.primary_brand]).filter(Boolean)
+  )).sort();
+
   if (!isOpen) {
     return null;
   }
 
-  const renderCategories = () => {
-    if (!searchTerm.length) return null;
-    
+  const renderEmptyState = () => {
+    if (searchTerm.length > 0) return null;
+
     return (
-      <div className="py-4 border-b border-gray-200">
-        <div className="space-y-2">
-          {categories.map(category => (
-            <Link
-              key={category.value}
-              href={`/search/${searchTerm}?category=${category.value}`}
-              className="flex items-center text-sm py-1 hover:bg-gray-50"
-              onClick={onClose}
-              suppressHydrationWarning
-            >
-              <span className="font-medium text-tps-red">{searchTerm}</span>
-              <span className="mx-2">in</span>
-              <span className="text-gray-600">{category.label}</span>
-            </Link>
-          ))}
-        </div>
+      <div className="space-y-8 py-4">
+        {/* Brands Section */}
+        <section>
+          <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-4 px-1">Shop by Brand</h3>
+          <div className="flex flex-wrap gap-2">
+            {allBrands.slice(0, 15).map(brand => (
+              <button
+                key={brand}
+                onClick={() => setSearchTerm(brand)}
+                className="px-4 py-2 border border-gray-100 rounded-full text-sm font-medium hover:border-black hover:bg-black hover:text-white transition-all"
+              >
+                {brand}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* Featured Products Section */}
+        <section>
+          <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-4 px-1">Popular Fragrances</h3>
+          <div className="grid grid-cols-2 gap-4">
+            {filteredProducts.map(product => (
+              <Link 
+                key={product.id} 
+                href={`/products/${product.handle}`}
+                className="group flex flex-col"
+                onClick={onClose}
+                suppressHydrationWarning
+              >
+                <div className="relative aspect-square mb-2 bg-gray-50 rounded-lg overflow-hidden group-hover:opacity-90 transition-opacity">
+                  <Image
+                    src={Array.isArray(product.images) ? product.images[0] : product.images.main[0]}
+                    alt={product.title}
+                    fill
+                    className="object-contain p-2"
+                  />
+                </div>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter truncate">
+                  {product.primary_brand || 'Premium'}
+                </p>
+                <p className="text-xs text-gray-700 font-medium truncate mb-1">
+                  {product.title}
+                </p>
+                <p className="text-sm font-bold text-black font-sans">
+                   £{typeof product.price.regular === 'string' ? parseFloat(product.price.regular).toFixed(2) : product.price.regular.toFixed(2)}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </section>
       </div>
     );
   };
 
-  const renderSuggestions = () => {
-    if (!suggestions.length) return null;
-
-    return (
-      <div className="py-4 border-b border-gray-200">
-        <div className="space-y-2">
-          {suggestions.map((suggestion, index) => (
-            <button
-              key={index}
-              onClick={() => setSearchTerm(suggestion)}
-              className="block w-full text-left text-sm py-1 hover:bg-gray-50"
-            >
-              {suggestion.split(new RegExp(`(${searchTerm})`, 'i')).map((part, i) => (
-                part.toLowerCase() === searchTerm.toLowerCase() ? (
-                  <span key={i} className="font-medium text-tps-red">{part}</span>
-                ) : (
-                  <span key={i}>{part}</span>
-                )
-              ))}
-            </button>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderProducts = () => {
-    if (!filteredProducts.length && !searchTerm.length) return null;
+  const renderResults = () => {
+    if (searchTerm.length === 0) return null;
 
     return (
       <div className="py-4">
         {filteredProducts.length > 0 ? (
           <>
-            <h3 className="text-lg font-medium mb-4">
-              {searchTerm.length === 0 ? 'Featured Products' : `Results for "${searchTerm}"`}
-            </h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center justify-between mb-6">
+               <h3 className="text-lg font-bold">Results for "{searchTerm}"</h3>
+               <span className="text-xs text-gray-500">{filteredProducts.length} items</span>
+            </div>
+            <div className="grid grid-cols-2 gap-6 md:gap-8">
               {filteredProducts.map(product => (
                 <Link 
                   key={product.id} 
                   href={`/products/${product.handle}`}
-                  className="block"
+                  className="group flex flex-col"
                   onClick={onClose}
                   suppressHydrationWarning
                 >
-                  <div className="relative aspect-square mb-2">
+                  <div className="relative aspect-square mb-4 bg-gray-50 rounded-lg overflow-hidden group-hover:scale-[1.02] transition-transform duration-300">
                     <Image
                       src={Array.isArray(product.images) ? product.images[0] : product.images.main[0]}
                       alt={product.title}
                       fill
-                      className="object-contain"
+                      className="object-contain p-4"
                     />
                   </div>
                   <div className="space-y-1">
-                    <p className="text-sm font-bold text-gray-900 uppercase">
-                      {product.primary_brand || 'Multi-Brand'}
+                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                      {product.primary_brand || 'Premium Brand'}
                     </p>
-                    <p className="text-sm text-gray-600 line-clamp-2">{product.title}</p>
-                    <p className="text-sm font-medium text-black">
-                      £{typeof product.price.regular === 'string' ? parseFloat(product.price.regular).toFixed(2) : product.price.regular.toFixed(2)}
-                      <span className="text-gray-500 ml-1">each</span>
-                    </p>
+                    <h4 className="text-sm text-gray-900 font-medium line-clamp-2 leading-relaxed">
+                      {product.title}
+                    </h4>
+                    <div className="flex items-center gap-2 pt-1 font-sans">
+                      <p className="text-base font-bold text-black">
+                        £{typeof product.price.regular === 'string' ? parseFloat(product.price.regular).toFixed(2) : product.price.regular.toFixed(2)}
+                      </p>
+                      <span className="text-xs text-gray-400 line-through">£169.99</span>
+                    </div>
                   </div>
                 </Link>
               ))}
             </div>
           </>
         ) : (
-          <p className="text-center text-gray-500 py-8">
-            No products found for "{searchTerm}"
-          </p>
+          <div className="text-center py-20 bg-gray-50 rounded-2xl">
+            <Search className="h-12 w-12 text-gray-200 mx-auto mb-4" />
+            <p className="text-gray-900 font-medium">
+              We couldn't find any results for "{searchTerm}"
+            </p>
+            <p className="text-sm text-gray-500 mt-1">
+              Try searching for a brand like "Dior" or "Sauvage"
+            </p>
+            <button 
+              onClick={() => setSearchTerm('')}
+              className="mt-6 text-sm font-bold uppercase tracking-widest text-[#e7071d] hover:underline"
+            >
+              Clear Search
+            </button>
+          </div>
         )}
       </div>
     );
   };
 
   return (
-    <div className="fixed inset-0 z-[100] bg-white flex flex-col">
-      <div className="border-b border-gray-200 flex-shrink-0">
+    <div className={`fixed inset-0 z-[100] bg-white flex flex-col transform transition-transform duration-300 ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}>
+      <div className="border-b border-gray-100 flex-shrink-0 bg-white">
         <div className="container mx-auto px-4">
-          <div className="flex items-center h-16">
-            <div className="flex-1 flex items-center">
+          <div className="flex items-center h-20">
+            <div className="flex-1 flex items-center bg-gray-100 rounded-full px-5 py-3">
               <Search className="h-5 w-5 text-gray-400" />
               <input
                 ref={inputRef}
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Looking for something specific?"
-                className="flex-1 ml-3 text-base outline-none placeholder-gray-400"
+                placeholder="Search brands or fragrances..."
+                className="flex-1 ml-3 text-base bg-transparent outline-none placeholder-gray-400 font-medium"
               />
+              {searchTerm.length > 0 && (
+                <button onClick={() => setSearchTerm('')} className="p-1">
+                  <X className="h-4 w-4 text-gray-400" />
+                </button>
+              )}
             </div>
-            <button onClick={onClose} className="p-2">
-              <X className="h-6 w-6" />
+            <button onClick={onClose} className="ml-4 p-2 text-sm font-bold uppercase tracking-widest text-black">
+              Cancel
             </button>
           </div>
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
-        <div className="container mx-auto px-4 pb-6">
-          {renderCategories()}
-          {renderSuggestions()}
-          {renderProducts()}
+        <div className="container mx-auto px-4 pb-12 pt-4">
+          {renderEmptyState()}
+          {renderResults()}
         </div>
       </div>
     </div>

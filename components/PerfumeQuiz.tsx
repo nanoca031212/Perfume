@@ -300,7 +300,7 @@ const ImageCarousel = () => {
           <Image
             key={index}
             src={image}
-            alt={`WWE SummerSlam Image ${index + 1}`}
+            alt={`Fragrance Collection Image ${index + 1}`}
             fill
             className={`object-cover transition-opacity duration-1000 ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'
               }`}
@@ -571,7 +571,7 @@ const USPPanel = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
       <div className="bg-white w-full max-w-4xl mt-12 mx-4">
         {/* Header */}
         <div className="flex items-center justify-between px-8 py-4">
-          <div className="text-xs font-medium uppercase tracking-[0.25em] text-black">WWE SummerSlam</div>
+          <div className="text-xs font-medium uppercase tracking-[0.25em] text-black">Heritage Fragrances</div>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-50 transition-colors duration-150"
@@ -587,41 +587,41 @@ const USPPanel = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
         <div className="grid md:grid-cols-3 gap-px bg-gray-100">
           {/* History */}
           <div className="p-12 text-center bg-white">
-            <div className="text-xs text-gray-400 uppercase tracking-[0.2em] mb-6">Since 1988</div>
+            <div className="text-xs text-gray-400 uppercase tracking-[0.2em] mb-6">Since 1968</div>
             <div className="text-sm text-gray-900 mb-2 leading-relaxed">
-              The Biggest Party
+              Fine Fragrance
             </div>
             <div className="text-xs text-gray-500">
-              Of The Summer
+              Artisans
             </div>
           </div>
 
           {/* Achievements */}
           <div className="p-12 text-center bg-white">
-            <div className="text-xs text-gray-400 uppercase tracking-[0.2em] mb-6">Legend</div>
+            <div className="text-xs text-gray-400 uppercase tracking-[0.2em] mb-6">Selection</div>
             <div className="text-sm text-gray-900 mb-2 leading-relaxed">
-              John Cena
+              Expertly
             </div>
             <div className="text-xs text-gray-500">
-              Farewell Tour
+              Curated
             </div>
           </div>
 
           {/* Legacy */}
           <div className="p-12 text-center bg-white">
-            <div className="text-xs text-gray-400 uppercase tracking-[0.2em] mb-6">Champion</div>
+            <div className="text-xs text-gray-400 uppercase tracking-[0.2em] mb-6">Collection</div>
             <div className="text-sm text-gray-900 mb-2 leading-relaxed">
-              Cody Rhodes
+              Luxury
             </div>
             <div className="text-xs text-gray-500">
-              American Nightmare
+              Heritage
             </div>
           </div>
         </div>
 
         {/* Footer */}
         <div className="px-8 py-6 text-center">
-          <div className="text-xs text-gray-400 uppercase tracking-[0.2em]">The Biggest Event of the Summer</div>
+          <div className="text-xs text-gray-400 uppercase tracking-[0.2em]">The Ultimate Fragrance Experience</div>
         </div>
       </div>
     </div>
@@ -696,7 +696,7 @@ const CompleteHeader = ({ onUSPClick }: { onUSPClick: () => void }) => {
       <div className="w-full bg-[#e7071d] border-b border-gray-200 transition-colors duration-200 py-2 group">
         <div className="flex items-center justify-center space-x-2 px-4">
           <div className="text-sm font-medium text-[#ffffff] uppercase tracking-wide">
-            Take the perfume quiz and get up to £120.00 off
+            Luxury fragrances. Up to 70% off. Limited stock
           </div>
         </div>
       </div>
@@ -705,7 +705,7 @@ const CompleteHeader = ({ onUSPClick }: { onUSPClick: () => void }) => {
 };
 
 // Remover o MinimalHeader e USPHeader antigos e usar apenas o CompleteHeader
-export default function WWESummerSlamQuiz() {
+export default function PerfumeQuiz() {
   const router = useRouter()
   const { addItem, setIsOpen } = useCart()
   const [gameStarted, setGameStarted] = useState(true);
@@ -889,7 +889,7 @@ export default function WWESummerSlamQuiz() {
           <CompleteHeader onUSPClick={handleUSPClick} />
           <USPPanel isOpen={showUSPPanel} onClose={handleUSPClose} />
           <div className="flex-grow">
-            <div className="container mx-auto pt-20 gap-10">
+            <div className="container pt-20 gap-10">
               <div className="text-center mb-10 animate-fadeIn">
                 <h1 className="text-4xl font-normal font-product-sans text-gray-900">Message from The Perfume Shop CEO</h1>
               </div>

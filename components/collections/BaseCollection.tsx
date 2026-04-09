@@ -210,7 +210,7 @@ export default function BaseCollection({
       <section className="pb-8">
         <div className="container mx-auto">
           {/* Grid de produtos - 2 colunas mobile com altura uniforme */}
-          <div className="grid grid-cols-2 gap-2 md:gap-6 auto-rows-fr">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-6 auto-rows-fr">
             {products.map((product, index) => (
               <ProductCardTPS 
                 key={product.id}

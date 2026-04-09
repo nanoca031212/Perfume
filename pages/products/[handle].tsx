@@ -70,7 +70,7 @@ export default function ProductPage({ product, relatedProducts }: ProductPagePro
         title: product.title,
         subtitle: `Eau de Parfum Spray - 100ML`,
         price: typeof product.price.regular === 'string' ? parseFloat(product.price.regular) : product.price.regular,
-        originalPrice: 200.00,
+        originalPrice: 169.99,
         image: Array.isArray(product.images) ? product.images[0] : product.images.main[0]
       };
 
@@ -125,7 +125,7 @@ export default function ProductPage({ product, relatedProducts }: ProductPagePro
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 px-4 pb-8 bg-white!important">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 px-4 pb-4 bg-white!important">
           {/* Product Images */}
           <div className="flex flex-col items-center">
             {/* Main Image */}
@@ -192,13 +192,13 @@ export default function ProductPage({ product, relatedProducts }: ProductPagePro
 
             {/* Discount Banner */}
             <div className="border border-black w-full text-center py-2 mb-6">
-              <span className="font-light text-black">UP TO 75% OFF APPLIED AT CHECKOUT</span>
+              <span className="font-light text-black">UP TO 70% OFF APPLIED AT CHECKOUT</span>
             </div>
 
             {/* Price and Size Selection */}
             <div className="w-full mb-2">
               <div className="flex items-center gap-2 mb-4">
-                <span className="text-[20px] text-gray-500">100ML - </span>
+                <span className="text-[15px] text-gray-500">100ML - </span>
                 <span className="text-[25px] font-medium text-[#e0001b]">£{product.price.regular}</span>
                 <span className="text-[15px] text-black">Save £{(169.99 - parseFloat(product.price.regular.toString())).toFixed(2)}</span>
                 <div className="flex ml-2">
@@ -281,12 +281,12 @@ export default function ProductPage({ product, relatedProducts }: ProductPagePro
           <div className="w-full bg-white pb-12 mt-12">
             <div className="max-w-[1440px] mx-auto">
               <h2 className="text-2xl font-bold mb-8 text-center">You May Also Like</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {relatedProducts?.slice(0, 8).map((relatedProduct, index) => (
+              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {relatedProducts?.slice(0, 18).map((relatedProduct, index) => (
                   <ProductCardTPS
                     key={relatedProduct.id}
                     product={relatedProduct}
-                    priority={index < 4}
+                    priority={index < 8}
                   />
                 ))}
               </div>

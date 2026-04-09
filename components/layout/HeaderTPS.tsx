@@ -12,9 +12,9 @@ interface HeaderTPSProps {
   sticky?: boolean
 }
 
-export default function HeaderTPS({ 
-  className = '', 
-  hidePromoBanner = false, 
+export default function HeaderTPS({
+  className = '',
+  hidePromoBanner = false,
   hideMagentaBanner = false,
   sticky = false
 }: HeaderTPSProps) {
@@ -38,15 +38,15 @@ export default function HeaderTPS({
     <header className={`${sticky ? 'sticky top-0 z-50' : 'relative'} ${className}`}>
       {/* Promotional Banner */}
       {!hidePromoBanner && (
-        <div className="bg-tps-red text-white text-center p-5 text-[15px] font-normal">
-          Take the perfume quiz and get up to £120 off*
+        <div className="bg-tps-red text-white text-center px-4 py-2 text-[15px] font-normal">
+          Luxury fragrances. Up to 70% off. Limited stock
         </div>
       )}
 
       {/* Top Bar - Preta */}
       <div className="bg-black text-white">
-        <div className="container mx-auto">
-          <div className="flex items-center justify-between h-16">
+        <div className="container">
+          <div className="flex items-center justify-between h-16 pl-2">
 
             {/* Logo */}
             <Link href="/" className="flex items-center" suppressHydrationWarning>
@@ -57,7 +57,7 @@ export default function HeaderTPS({
             <div className="flex items-center space-x-3">
               {/* Currency Icon - sempre visível */}
               <img src="/images/IconLibra.jpg" alt="GBP" width={30} height={30} />
-              
+
             </div>
           </div>
         </div>
@@ -95,16 +95,6 @@ export default function HeaderTPS({
       {!hideMagentaBanner && <div className="bg-tps-magenta">
         <div className="container mx-auto">
           <nav className="flex overflow-x-auto scrollbar-none">
-            {/* Home/All Products */}
-            <Link
-              href="/"
-              className="flex-shrink-0 px-6 py-4 text-white text-sm font-bold uppercase tracking-wider
-                       transition-colors whitespace-nowrap"
-              suppressHydrationWarning
-            >
-              OFFERS
-            </Link>
-            
             {/* Men's Collection */}
             <Link
               href="/collections/mens"
@@ -114,14 +104,14 @@ export default function HeaderTPS({
             >
               MEN'S
             </Link>
-            
+
             {/* Women's Collection */}
             <Link
               href="/collections/womens"
               className="flex-shrink-0 px-6 py-4 text-white text-sm font-medium uppercase tracking-wider
                        hover:bg-white hover:bg-opacity-10 transition-colors whitespace-nowrap"
               suppressHydrationWarning
-            >        
+            >
               WOMEN'S
             </Link>
 
@@ -134,7 +124,7 @@ export default function HeaderTPS({
             >
               GIFT SETS
             </Link>
-            
+
             {/* Special Offers */}
             <Link
               href="/"
@@ -146,13 +136,13 @@ export default function HeaderTPS({
             </Link>
           </nav>
         </div>
-      </div>}     
-      
+      </div>}
+
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 top-[120px] bg-white z-50 overflow-y-auto">
           <nav className="container mx-auto px-4 py-6">
-            
+
             {/* Main Navigation */}
             <div className="space-y-1 mb-8">
               {mainNavItems.map((item) => (

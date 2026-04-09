@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { X, Minus, Plus } from 'lucide-react'
+import { X, Minus, Plus, Trash2 } from 'lucide-react'
 import { useCart } from '@/contexts/CartContext'
 import { useRouter } from 'next/router'
 import { validateAndFixCartItem } from '@/lib/cacheCleanup'
@@ -100,14 +100,13 @@ export default function ShoppingBag({ isOpen, onClose }: ShoppingBagProps) {
                   </div>
 
                   {/* Quantity Controls */}
-                  <div className="flex items-center gap-2 mt-2">
-                    <button
-                      onClick={() => updateQuantity(item.id, -1)}
-                      className="p-1 hover:bg-gray-100 rounded border"
-                      disabled={item.quantity <= 1}
-                    >
-                      <Minus size={14} />
-                    </button>
+                    <div className="flex items-center gap-2 mt-2">
+                      <button
+                        onClick={() => updateQuantity(item.id, -1)}
+                        className={`p-1.5 rounded border transition-colors ${item.quantity === 1 ? 'text-red-500 border-red-100 hover:bg-red-50' : 'hover:bg-gray-100'}`}
+                      >
+                        {item.quantity === 1 ? <Trash2 size={14} /> : <Minus size={14} />}
+                      </button>
                     <span className="w-8 text-center text-sm">{item.quantity}</span>
                     <button
                       onClick={() => updateQuantity(item.id, 1)}
@@ -122,7 +121,7 @@ export default function ShoppingBag({ isOpen, onClose }: ShoppingBagProps) {
                 {/* Remove Button */}
                 <button
                   onClick={() => removeItem(item.id)}
-                  className="text-xs text-red-500 hover:text-gray-700 self-start mt-1"
+                  className="text-xs font-bold uppercase tracking-tighter text-red-500 hover:text-red-700 self-start mt-1 px-1 py-0.5"
                 >
                   Remove
                 </button>
@@ -135,7 +134,7 @@ export default function ShoppingBag({ isOpen, onClose }: ShoppingBagProps) {
         <div className="border-t px-4 pb-14 bg-white">
           <div className="mt-4 space-y-1.5">
             <div className="flex justify-between items-center text-xs text-gray-500">
-              <span>Original total</span>
+              <span>Total</span>
               <span className="line-through">£{totalOriginal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between items-center text-xs text-black font-medium font-sans">
@@ -150,11 +149,11 @@ export default function ShoppingBag({ isOpen, onClose }: ShoppingBagProps) {
 
           <button
             onClick={handleCheckout}
-            className={`w-full bg-black text-white py-4 rounded-full font-bold text-center mt-4 transition-all active:scale-95
+            className={`w-full bg-black text-white py-3 rounded-full font-bold text-center mt-6 transition-all active:scale-95
               ${items.length === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-900 shadow-lg shadow-gray-200'}`}
             disabled={items.length === 0}
           >
-            SECURE CHECKOUT • £{total.toFixed(2)}
+            CHECKOUT • £{total.toFixed(2)}
           </button>
         </div>
       </div>

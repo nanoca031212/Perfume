@@ -28,10 +28,10 @@ data.products = data.products.map(product => {
     let newHtml = product.description_html.replace(/£59\.90/g, `£${NEW_PRICE}`);
 
     // Recalcular savings se possível, ou apenas substituir strings conhecidas
-    // Padrão antigo: Total Savings: £110.10 (70% OFF)
+    // Padrão antigo: Total Savings: £110.10 (75% OFF)
     // Novo padrão: Total Savings: £120.01 (71% OFF)
 
-    newHtml = newHtml.replace(/Total Savings: £110\.10 \(70% OFF\)/g, `Total Savings: £${savings} (${savingsPercent}% OFF)`);
+    newHtml = newHtml.replace(/Total Savings: £110\.10 \(75% OFF\)/g, `Total Savings: £${savings} (${savingsPercent}% OFF)`);
 
     if (newHtml !== product.description_html) {
       product.description_html = newHtml;

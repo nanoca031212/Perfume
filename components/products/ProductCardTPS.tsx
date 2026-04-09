@@ -101,7 +101,7 @@ export default function ProductCardTPS({ product, className = '', priority = fal
 
           {/* Promotional Banner */}
           <div className="bg-white border border-black text-center text-xs py-1 mb-2">
-            UP TO 75% OFF APPLIED AT CHECKOUT
+            UP TO 70% OFF APPLIED AT CHECKOUT
           </div>
 
           {/* Badge - Canto superior direito */}
@@ -141,7 +141,7 @@ export default function ProductCardTPS({ product, className = '', priority = fal
         <div className="text-center space-y-2 flex flex-col flex-grow">
 
           {/* Brand */}
-          <div className="text-sm font-bold uppercase tracking-wide text-[#333333] mb-1">
+          <div className="text-sm font-bold uppercase tracking-wide text-[#333333]">
             {primaryBrand}
           </div>
 
@@ -164,9 +164,10 @@ export default function ProductCardTPS({ product, className = '', priority = fal
           <div className="space-y-1 mx-auto">
             {/* Price Range */}
             <div className="flex flex-col">
-              <div className="flex items-center gap-2 text-sm mt-1">
-                <span className="text-gray-500">£{formatPrice(product.price.regular)}</span>
-                <span className="text-vetps-red font-bold">Save £120.00</span>
+              <div className="flex items-center justify-center gap-2 text-sm">
+                <span className="text-black text-lg font-bold">£{formatPrice(product.price.regular)}</span>
+                <span className="text-gray-700 line-through text-xs">£169.99</span>
+
               </div>
             </div>
 

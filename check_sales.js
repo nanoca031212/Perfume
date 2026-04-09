@@ -16,8 +16,8 @@ async function checkSales() {
   console.log('--- RELATÓRIO DE VENDAS STRIPE ---\n');
   
   try {
-    // Busca Payment Intents recentes (últimos 100)
-    const paymentIntents = await stripe.paymentIntents.list({
+    // Busca Checkout Sessions recentes (últimas 100)
+    const sessions = await stripe.checkout.sessions.list({
       limit: 100,
       expand: ['data.customer'],
     });
@@ -36,12 +36,12 @@ async function checkSales() {
 
     const recentTransactions = [];
 
-    paymentIntents.data.forEach(pi => {
-      if (pi.status !== 'succeeded') return;
+    sessions.data.forEach(session => {
+      if (session.payment_status !== 'paid') return;
 
-      const amount = pi.amount / 100;
-      const created = pi.created;
-      const currency = pi.currency.toUpperCase();
+      const amount = session.amount_total / 100;
+      const created = session.created;
+      const currency = session.currency.toUpperCase();
 
       // Stats
       if (created >= startOfToday) {
@@ -60,32 +60,39 @@ async function checkSales() {
       stats.all.count++;
       stats.all.total += amount;
 
-      // Email fallback: pi.receipt_email, pi.customer.email, pi.metadata.email, pi.metadata.customer_email
-      let email = pi.receipt_email || 
-                  (pi.customer && typeof pi.customer === 'object' ? pi.customer.email : pi.customer) ||
-                  pi.metadata.email || 
-                  pi.metadata.customer_email || 
+      // Email fallback
+      let email = session.customer_details?.email || 
+                  session.customer_email ||
+                  (session.customer && typeof session.customer === 'object' ? session.customer.email : session.customer) ||
+                  session.metadata?.email || 
+                  session.metadata?.customer_email || 
                   'N/A';
 
-      // Check if pi.customer is just an ID
-      if (email.startsWith('cus_')) email = 'N/A';
+      // Check if email is just an ID
+      if (typeof email === 'string' && email.startsWith('cus_')) email = 'N/A';
 
       // UTMify / UTMs
-      const utm = pi.metadata.utm_source || 
-                  pi.metadata.src || 
-                  pi.metadata.xcod || 
-                  pi.metadata.utmify_source || 
+      const utm = session.metadata?.utm_source || 
+                  session.metadata?.utm_campaign ||
+                  session.metadata?.src || 
+                  session.metadata?.xcod || 
+                  session.metadata?.utmify_source || 
                   'N/A';
+
+      const criativo = session.metadata?.utm_content || 
+                       session.metadata?.utm_term || 
+                       'N/A';
 
       // Add to recent if within last 10
       if (recentTransactions.length < 10) {
         recentTransactions.push({
-          id: pi.id,
+          id: session.id,
           email: email,
           amount: amount,
           currency: currency,
           date: new Date(created * 1000).toLocaleString('pt-BR'),
           utm: utm,
+          criativo: criativo,
         });
       }
     });
@@ -98,7 +105,8 @@ async function checkSales() {
 
     console.log('ÚLTIMAS 10 TRANSAÇÕES:');
     recentTransactions.forEach((t, i) => {
-      console.log(`${(i + 1).toString().padEnd(2)} [${t.date}] ${t.amount.toFixed(2).padStart(8)} ${t.currency} - ${t.email.padEnd(30)} (UTM: ${t.utm})`);
+      console.log(`${(i + 1).toString().padEnd(2)} [${t.date}] ${t.amount.toFixed(2).padStart(8)} ${t.currency} - ${t.email.padEnd(30)}`);
+      console.log(`      (UTM: ${t.utm} | Criativo: ${t.criativo})`);
     });
 
   } catch (error) {

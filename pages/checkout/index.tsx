@@ -9,6 +9,8 @@ import { useRouter } from 'next/router';
 import HeaderTPS from '@/components/layout/HeaderTPS';
 import FooterTPS from '@/components/layout/FooterTPS';
 
+import { Timer, Info, ShoppingBag } from 'lucide-react';
+
 // Make sure to call loadStripe outside of a component’s render to avoid
 // recreating the Stripe object on every render.
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string);
@@ -28,6 +30,33 @@ export default function CheckoutPage() {
         phone: ''
     });
     const router = useRouter();
+    const [showPromoInfo, setShowPromoInfo] = useState(false);
+    const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+    useEffect(() => {
+        // Alvo: Hoje + 24h a partir de agora
+        const targetDate = new Date();
+        targetDate.setDate(targetDate.getDate() + 1);
+
+        const timer = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = targetDate.getTime() - now;
+
+            if (distance < 0) {
+                clearInterval(timer);
+                return;
+            }
+
+            setTimeLeft({
+                days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+                hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+                seconds: Math.floor((distance % (1000 * 60)) / 1000)
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, []);
 
     useEffect(() => {
         // Create a Checkout Session only when step is payment
@@ -135,11 +164,13 @@ export default function CheckoutPage() {
             <div className="max-w-4xl mx-auto">
                 {/* Order Summary */}
                 <div className="bg-white p-6 rounded-lg shadow-sm">
-                    <h2 className="text-xl font-bold mb-4">Order Summary</h2>
-                    <div className="space-y-4">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-xl font-bold">Order Summary</h2>
+                    </div>
+                    <div className="space-y-2">
                         {items.map((item) => (
-                            <div key={item.id} className="flex items-center space-x-4 border-b pb-4 last:border-0 last:pb-0">
-                                <div className="relative w-20 h-20 flex-shrink-0">
+                            <div key={item.id} className="flex items-center space-x-4 space-y-2 last:border-0 last:pb-0">
+                                <div className="relative w-20 h-20 bg-gray-100 px-2 flex-shrink-0 rounded-md">
                                     <img
                                         src={item.image}
                                         alt={item.title}
@@ -147,29 +178,57 @@ export default function CheckoutPage() {
                                     />
                                 </div>
                                 <div className="flex-1">
-                                    <h3 className="font-medium text-gray-900">{item.title}</h3>
-                                    <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                                    <h3 className="font-medium text-gray-900 text-sm">{item.title}</h3>
+                                    <p className="text-[12px] text-white bg-black rounded-full w-fit px-2">Qty: {item.quantity}</p>
                                     <div className="flex items-center gap-2 mt-1">
-                                        <span className="text-xs line-through text-gray-400">£{(item.originalPrice || 169.99).toFixed(2)}</span>
+                                        <span className="font-bold text-gray-900">£{item.price.toFixed(2)}</span>
+                                        <span className="text-xs line-through text-gray-400">Was £{(item.originalPrice || 169.99).toFixed(2)}</span>
                                     </div>
-                                </div>
-                                <div className="text-right">
-                                    <p className="font-bold text-gray-900">£{item.price.toFixed(2)}</p>
                                 </div>
                             </div>
                         ))}
                     </div>
-                    <div className="border-t mt-4 pt-4 space-y-2">
-                        <div className="flex justify-between items-center text-sm text-gray-500">
-                            <span>Original total</span>
+                    <div className="flex flex-col-2 justify-between pt-4">
+                        <div className="flex items-center gap-1 text-[#ff0000] px-3 py-1 rounded-full text-xs font-bold">
+                            <Timer className="w-3.5 h-3.5" />
+                            <span>LIMITED OFFER ENDS IN</span>
+                        </div>
+                        <div className="flex gap-1 text-[10px] p-1 font-mono text-gray-500">
+                            <span className="bg-gray-100 px-1">{timeLeft.hours.toString().padStart(2, '0')}h</span>
+                            <span className="bg-gray-100 px-1">{timeLeft.minutes.toString().padStart(2, '0')}m</span>
+                            <span className="bg-red-600 text-white px-1 rounded animate-pulse">{timeLeft.seconds.toString().padStart(2, '0')}s</span>
+                        </div>
+                    </div>
+                    <div className="mt-4 pt-4 space-y-2">
+                        <div className="flex justify-between items-center text-sm text-gray-600">
+                            <span>Subtotal (List Price)</span>
                             <span className="line-through">£{totalOriginal.toFixed(2)}</span>
                         </div>
-                        <div className="flex justify-between items-center text-sm text-green-600 font-medium">
-                            <span>Bundle savings</span>
+                        <div className="flex justify-between items-center text-sm text-green-600 font-bold relative">
+                            <div className="flex items-center gap-1">
+                                <span>Exclusive Bundle Savings</span>
+                                <button
+                                    onMouseEnter={() => setShowPromoInfo(true)}
+                                    onMouseLeave={() => setShowPromoInfo(false)}
+                                    onClick={() => setShowPromoInfo(!showPromoInfo)}
+                                    className="text-gray-400 hover:text-black transition-colors"
+                                >
+                                    <Info className="w-4 h-4" />
+                                </button>
+                                {showPromoInfo && (
+                                    <div className="absolute bottom-full left-0 mb-2 w-64 bg-white border border-gray-200 p-3 rounded-lg shadow-xl z-50 animate-in fade-in slide-in-from-bottom-2">
+                                        <h4 className="font-bold text-gray-900 text-xs mb-1">3-for-1 EXCLUSIVE OFFER</h4>
+                                        <p className="text-[11px] leading-relaxed text-gray-600 font-normal">
+                                            Get 3 luxury 100ml fragrances for the price of one. This exclusive bundle deal applies automatically at checkout, saving you over £120 compared to individual retail prices.
+                                        </p>
+                                        <div className="absolute left-4 -bottom-1 w-2 h-2 bg-white border-r border-b border-gray-200 rotate-45"></div>
+                                    </div>
+                                )}
+                            </div>
                             <span>-£{(totalOriginal - total).toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between items-center pt-2 border-t border-gray-100">
-                            <span className="font-bold text-lg text-gray-900">Final Price</span>
+                            <span className="font-bold text-lg text-gray-900">Total to pay</span>
                             <span className="font-bold text-2xl text-black">£{total.toFixed(2)}</span>
                         </div>
                     </div>
@@ -244,10 +303,8 @@ export default function CheckoutPage() {
                                 type="submit"
                                 className="w-full bg-black text-white py-4 px-4 rounded-md hover:bg-gray-800 transition-colors font-bold text-lg mt-6 flex justify-center items-center gap-2"
                             >
-                                Continue to Payment
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                                </svg>
+                                <ShoppingBag className="w-6 h-6" />
+                                Buy Now
                             </button>
                         </form>
                     </div>

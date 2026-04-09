@@ -10,9 +10,9 @@ export default function PromotionalCarousel({ className = '' }: PromotionalCarou
 
   const promotions = [
     {
-      text: '75% OFF',
-      subtext: 'WITH QUIZ DISCOUNT',
-        href: '/quiz-discount'
+      text: '70% OFF',
+      subtext: 'WITH 3x1 DISCOUNT',
+      href: '/'
     },
     {
       text: 'DONT EXIT',
@@ -20,7 +20,7 @@ export default function PromotionalCarousel({ className = '' }: PromotionalCarou
       href: '/delivery-information'
     },
     {
-    text: 'PROMO CODE APPLIES',
+      text: 'PROMO CODE APPLIES',
       subtext: 'IN 100+ UK STORES',
       href: '/deliveroo'
     },
@@ -32,7 +32,7 @@ export default function PromotionalCarousel({ className = '' }: PromotionalCarou
     {
       text: 'LAST WEEK TO SAVE',
       subtext: 'ON PERFUME PROMISE',
-      href: '/offers'
+      href: '/'
     }
   ]
 
@@ -49,7 +49,7 @@ export default function PromotionalCarousel({ className = '' }: PromotionalCarou
     <div className={`bg-gray-100 border-b border-gray-200 overflow-hidden ${className}`}>
       <div className="relative h-12">
         <div className="absolute inset-0 flex items-center justify-center">
-          <div 
+          <div
             className="flex transition-transform duration-700 ease-in-out w-full"
             style={{ transform: `translateX(-${currentSlide * 100}%)` }}
           >

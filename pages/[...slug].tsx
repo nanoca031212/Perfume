@@ -1,9 +1,6 @@
-import { useState } from 'react'
-import Layout from '@/components/layout/Layout'
-import ListControls from '@/components/filters/ListControls'
 import { getAllProducts } from '@/lib/products'
 import { Product } from '@/types/product'
-import ProductCardTPS from '@/components/products/ProductCardTPS'
+import BaseCollection from '@/components/collections/BaseCollection'
 
 // Tipos de página e suas configurações
 const pageConfigs = {
@@ -64,67 +61,16 @@ interface DynamicPageProps {
   subPageConfig?: typeof subPageConfigs[keyof typeof subPageConfigs] | null
 }
 
-export default function DynamicPage({ products: initialProducts, pageConfig, subPageConfig }: DynamicPageProps) {
-  const [products, setProducts] = useState<Product[]>(initialProducts)
+export default function DynamicPage({ products, pageConfig, subPageConfig }: DynamicPageProps) {
+  const title = subPageConfig ? subPageConfig.title : pageConfig.title
+  const description = subPageConfig ? subPageConfig.description : pageConfig.description
 
   return (
-    <Layout>
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            {subPageConfig ? subPageConfig.title : pageConfig.title}
-          </h1>
-          <p className="mt-2 text-gray-600">
-            {subPageConfig ? subPageConfig.description : pageConfig.description}
-          </p>
-        </div>
-
-        {/* Promotional Banner para Offers */}
-        {pageConfig.tag === 'offers' && (
-          <div className="bg-tps-red text-white text-center p-4 rounded-lg mb-8">
-            <p className="text-lg font-medium">
-              Extra 10% OFF for Members - Join Now!
-            </p>
-          </div>
-        )}
-
-        <ListControls 
-          products={products}
-          onFilterToggle={(filters) => {
-            if (filters.length === 0) {
-              setProducts(products)
-              return
-            }
-
-            const filtered = products.filter(product => {
-              return filters.some(filter => {
-                // Filtro de marca
-                if (filter.includes('-')) {
-                  const brandRegex = new RegExp(filter.replace(/-/g, '\\s+'), 'i')
-                  if (product.brands?.some(brand => brandRegex.test(brand))) return true
-                  if (product.primary_brand && brandRegex.test(product.primary_brand)) return true
-                  if (product.title && brandRegex.test(product.title)) return true
-                }
-                
-                return false
-              })
-            })
-            
-            setProducts(filtered)
-          }}
-        />
-
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {products.map((product, index) => (
-            <ProductCardTPS 
-              key={product.id}
-              product={product}
-              priority={index < 4}
-            />
-          ))}
-        </div>
-      </div>
-    </Layout>
+    <BaseCollection
+      products={products}
+      title={title}
+      description={description}
+    />
   )
 }
 

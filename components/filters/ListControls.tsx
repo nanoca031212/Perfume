@@ -13,7 +13,7 @@ interface ListControlsProps {
   products: Product[]
 }
 
-export default function ListControls({ 
+export default function ListControls({
   resultsCount = 1130,
   currentPage = 1,
   totalPages = 32,
@@ -24,17 +24,17 @@ export default function ListControls({
 }: ListControlsProps) {
   const [showSortDropdown, setShowSortDropdown] = useState(false)
   const [showFilterDropdown, setShowFilterDropdown] = useState(false)
-  
+
   // Usar filtros baseados em sessão UTM
-  const { 
-    sessionFilters, 
-    updateSort, 
-    updateFilters, 
+  const {
+    sessionFilters,
+    updateSort,
+    updateFilters,
     updateCollections,
     clearFilters,
-    isLoaded 
+    isLoaded
   } = useSessionFilters()
-  
+
   const currentSort = sessionFilters.sort
   const activeFilters = sessionFilters.activeFilters
 
@@ -51,9 +51,9 @@ export default function ListControls({
   // Função para extrair marcas únicas dos produtos
   const extractBrands = () => {
     const brandsSet = new Set<string>();
-    
+
     if (!products) return [];
-    
+
     products.forEach(product => {
       // Adiciona marcas do array brands
       if (product.brands) {
@@ -61,12 +61,12 @@ export default function ListControls({
           if (brand !== 'Multi-Brand') brandsSet.add(brand);
         });
       }
-      
+
       // Adiciona primary_brand se existir e não estiver no set
       if (product.primary_brand && product.primary_brand !== 'Multi-Brand') {
         brandsSet.add(product.primary_brand);
       }
-      
+
       // Procura por marcas no título usando regex
       const titleBrands = product.title.match(/(?:by\s+)?([A-Z][A-Za-z\s&]+?)(?:\s+(?:&|and|e)\s+|$|\s*,)/g);
       if (titleBrands) {
@@ -85,7 +85,7 @@ export default function ListControls({
   // Função para detectar o gênero do produto
   const detectGender = (product: Product): string | null => {
     const tags = product.tags;
-    
+
     // Verifica tags específicas de gênero
     if (tags.includes('men') || tags.includes('masculine') || tags.includes('him')) {
       return 'men';
@@ -93,7 +93,7 @@ export default function ListControls({
     if (tags.includes('women') || tags.includes('feminine') || tags.includes('her')) {
       return 'women';
     }
-    
+
     // Se não encontrar tags específicas, verifica o título
     const titleLower = product.title.toLowerCase();
     if (titleLower.includes('men') || titleLower.includes('masculino') || titleLower.includes('homme')) {
@@ -102,7 +102,7 @@ export default function ListControls({
     if (titleLower.includes('women') || titleLower.includes('feminino') || titleLower.includes('femme')) {
       return 'women';
     }
-    
+
     // Se não encontrar, retorna null para não mostrar no filtro
     return null;
   };
@@ -117,7 +117,6 @@ export default function ListControls({
       { value: 'bestseller', label: 'Bestsellers' },
       { value: 'gift-set', label: 'Gift Sets' },
       { value: 'premium', label: 'Premium' },
-      { value: 'offers', label: 'Special Offers' }
     ],
     'Brand': extractBrands().map(brand => ({
       value: brand.toLowerCase().replace(/\s+/g, '-'),
@@ -143,7 +142,7 @@ export default function ListControls({
 
   const handleFilterChange = (value: string) => {
     let newFilters: string[]
-    
+
     if (activeFilters.includes(value)) {
       newFilters = activeFilters.filter(f => f !== value)
     } else {
@@ -155,7 +154,7 @@ export default function ListControls({
         newFilters = [...activeFilters, value]
       }
     }
-    
+
     updateFilters(newFilters)
     onFilterToggle?.(newFilters)
   }
@@ -163,10 +162,10 @@ export default function ListControls({
   return (
     <div className={`bg-gray-chip pt-2 ${className}`}>
       <div className="container mx-auto">
-        
+
         {/* Controls Row */}
         <div className="flex items-center justify-center mb-4">
-          
+
           {/* Sort By */}
           <div className="relative">
             <button
@@ -232,7 +231,7 @@ export default function ListControls({
                     </div>
                   </div>
                 ))}
-                
+
                 {/* Apply/Clear Buttons */}
                 <div className="p-4 bg-gray-50 border-t border-gray-100 flex justify-between">
                   <button
@@ -253,15 +252,15 @@ export default function ListControls({
                 </div>
               </div>
             )}
-                  </div>
+          </div>
         </div>
 
-      
+
       </div>
 
       {/* Mobile: Sticky background overlay when dropdowns are open */}
       {(showSortDropdown || showFilterDropdown) && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-25 z-40"
           onClick={() => {
             setShowSortDropdown(false)

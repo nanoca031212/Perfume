@@ -109,13 +109,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   const updateQuantity = (id: number, delta: number) => {
-    setItems(items =>
-      items.map(item =>
+    setItems(prevItems => {
+      const itemToUpdate = prevItems.find(item => item.id === id);
+      if (itemToUpdate && itemToUpdate.quantity + delta <= 0) {
+        return prevItems.filter(item => item.id !== id);
+      }
+      return prevItems.map(item =>
         item.id === id
-          ? { ...item, quantity: Math.max(1, Math.min(10, item.quantity + delta)) }
+          ? { ...item, quantity: Math.max(0, Math.min(10, item.quantity + delta)) }
           : item
-      )
-    )
+      );
+    });
   }
 
   const clearCart = () => {
@@ -140,7 +144,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         isOpen,
         setIsOpen,
         total,
-        totalOriginal: items.reduce((sum, item) => sum + ((item.originalPrice || item.price) * item.quantity), 0),
+        totalOriginal: items.reduce((sum, item) => sum + ((item.originalPrice || 169.99) * item.quantity), 0),
         initiateCheckout,
         utm_campaign: utmParams.utm_campaign || null
       }}
