@@ -31,7 +31,7 @@ export default function ProductCardTPS({
           setSelectionCount(count);
         }
       }
-    } catch (e) {}
+    } catch (e) { }
   };
 
   useEffect(() => {
@@ -112,7 +112,7 @@ export default function ProductCardTPS({
         state.selections[slotIndex] = product;
         localStorage.setItem("bundleState", JSON.stringify(state));
         window.dispatchEvent(new Event("bundleStateUpdated"));
-      } catch (err) {}
+      } catch (err) { }
 
       let updatedReturnTo = returnTo as string;
       if (slotIndex === 0) {
@@ -132,7 +132,7 @@ export default function ProductCardTPS({
             }
           }
         }
-      } catch (e) {}
+      } catch (e) { }
 
       if (nextEmptySlot !== -1) {
         router.push(`/?bundleSlot=${nextEmptySlot}&returnTo=${encodeURIComponent(updatedReturnTo)}`, undefined, { shallow: true, scroll: false });
@@ -182,21 +182,21 @@ export default function ProductCardTPS({
           }
         }
       }
-    } catch (err) {}
+    } catch (err) { }
   };
 
   const CardWrapper = isSelectionMode ? "button" : Link;
   const cardProps = isSelectionMode
     ? {
-        onClick: handleCardClick,
-        className: "flex flex-col flex-grow text-left",
-      }
+      onClick: handleCardClick,
+      className: "flex flex-col flex-grow text-left",
+    }
     : {
-        href: `/products/${product.handle}`,
-        onClick: handleViewContent,
-        className: "flex flex-col flex-grow",
-        suppressHydrationWarning: true,
-      };
+      href: `/products/${product.handle}`,
+      onClick: handleViewContent,
+      className: "flex flex-col flex-grow",
+      suppressHydrationWarning: true,
+    };
 
   return (
     <div className={`bg-white flex flex-col h-full ${className}`}>
@@ -229,9 +229,9 @@ export default function ProductCardTPS({
                 style={
                   product.image_scale
                     ? {
-                        transform: `scale(${product.image_scale})`,
-                        transition: "transform 0.2s",
-                      }
+                      transform: `scale(${product.image_scale})`,
+                      transition: "transform 0.2s",
+                    }
                     : undefined
                 }
                 priority={priority}
@@ -293,10 +293,10 @@ export default function ProductCardTPS({
           <div className="space-y-1 mx-auto">
             {/* Price Range */}
             <div className="flex flex-col">
-              <div className="flex  flex-col items-center justify-center gap-2 text-sm">
+              <div className="flex  flex-col-2 items-center justify-center gap-2 text-sm">
                 <div>
                   <span className="text-black uppercase text-lg font-semibold">
-                    only £{formatPrice(product.price.regular)}
+                    £{formatPrice(product.price.regular)}
                   </span>
                 </div>
                 <span className="text-gray-700 line-through text-xs">
