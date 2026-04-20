@@ -32,7 +32,7 @@ export default function ProductCardTPS({
           
           const indices = nonNullSelections
             .map((p: any, idx: number) => (p.id === product.id ? idx + 1 : null))
-            .filter((idx) => idx !== null) as number[];
+            .filter((idx: number | null) => idx !== null) as number[];
 
           setSelectionIndices(indices.join(", "));
         }
