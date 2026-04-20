@@ -283,7 +283,7 @@ export default function ProductCardTPS({
         {/* Product Info - flex grow para empurrar botão para baixo */}
         <div className="text-center space-y-2 flex flex-col  flex-grow">
           {/* Product Name - full title from folder name */}
-          <h3 className="text-sm font-bold text-black   inline-block leading-tight flex items-center justify-center text-center px-1">
+          <h3 className="text-sm font-bold text-black leading-tight text-center px-1 truncate sm:whitespace-normal sm:overflow-visible w-full block">
             {product.title}
           </h3>
 
