@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { ChevronRight, Pencil, Trash2 } from "lucide-react";
@@ -25,6 +25,20 @@ export default function BundleSelector({
   onAddToCart,
 }: BundleSelectorProps) {
   const router = useRouter();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Smooth scroll to bundle selector when returning from picker
+  useEffect(() => {
+    if (router.query.scroll === "bundle") {
+      setTimeout(() => {
+        containerRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 500); // 500ms delay to ensure images and layout are fully loaded
+
+      // Clean up the URL parameter
+      const { scroll, ...rest } = router.query;
+      router.replace({ pathname: router.pathname, query: rest }, undefined, { shallow: true });
+    }
+  }, [router.query.scroll, router]);
   const [selectedPack, setSelectedPack] = useState<"single" | "trio" | "penta">(
     "single",
   );
@@ -42,6 +56,22 @@ const unitPrice = Number(currentProduct.price.regular) || 26.00;
 
   // Read localStorage selections on mount
   useEffect(() => {
+    // Prioritize reset flag (from home page navigation)
+    if (router.query.reset === "true") {
+      setSelectedPack("single");
+      const initialSelections = [currentProduct, null, null, null, null];
+      setFragranceSelections(initialSelections);
+      localStorage.setItem(
+        "bundleState",
+        JSON.stringify({ packType: "single", selections: initialSelections }),
+      );
+      
+      // Clean up the URL flag
+      const { reset, ...rest } = router.query;
+      router.replace({ pathname: router.pathname, query: rest }, undefined, { shallow: true });
+      return;
+    }
+
     const stored = localStorage.getItem("bundleState");
     if (stored) {
       try {
@@ -79,7 +109,7 @@ const unitPrice = Number(currentProduct.price.regular) || 26.00;
     } else {
       setFragranceSelections([currentProduct, null, null, null, null]);
     }
-  }, [currentProduct]);
+  }, [currentProduct, router.query.reset, router]);
 
   const handlePackSelect = (packId: "single" | "trio" | "penta") => {
     const isNewPack = selectedPack !== packId;
@@ -207,7 +237,7 @@ const unitPrice = Number(currentProduct.price.regular) || 26.00;
   ];
 
   return (
-    <div className="w-full mt-6">
+    <div ref={containerRef} className="w-full mt-6">
       {/* Header */}
       <div className="text-center mb-4">
         <h3 className="text-lg font-bold uppercase tracking-widest text-black border-b border-black pb-2">

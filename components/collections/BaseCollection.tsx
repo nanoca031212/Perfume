@@ -32,8 +32,28 @@ export default function BaseCollection({
   const [remaining, setRemaining] = useState(0)
   const [packName, setPackName] = useState("")
   const [showAlert, setShowAlert] = useState(false)
+  const [toastVisible, setToastVisible] = useState(false)
   const [baseProductId, setBaseProductId] = useState<number | null>(null)
+  const [selectedImages, setSelectedImages] = useState<string[]>([])
+  const [selectedCount, setSelectedCount] = useState(0)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const fadeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const lastScrollY = useRef(0)
+  const collapseTimerRef = useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      // Qualquer direção de rolagem significativa fará a pilha recolher
+      if (Math.abs(currentScrollY - lastScrollY.current) > 10) {
+        setIsCollapsed(true);
+      }
+      lastScrollY.current = currentScrollY <= 0 ? 0 : currentScrollY;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const calculateRemaining = () => {
     try {
@@ -49,10 +69,35 @@ export default function BaseCollection({
           }
           setRemaining(pCount - filled)
           setPackName(state.packType === "trio" ? "3 Perfumes" : state.packType === "penta" ? "5 Perfumes" : "1 Perfume")
+          setSelectedCount(filled)
 
+          // Encontrar todas as imagens dos produtos selecionados
+          const nonNullSelections = state.selections.filter((p: any) => p)
+          const extractedImages = nonNullSelections.map((selection: any) => {
+            return Array.isArray(selection.images) 
+              ? selection.images[0] 
+              : (selection.images?.main?.[0] || selection.image || "")
+          })
+          setSelectedImages(extractedImages)
+
+          // Trigger toast with smooth transitions
           setShowAlert(true)
+          setTimeout(() => setToastVisible(true), 10)
+
           if (timeoutRef.current) clearTimeout(timeoutRef.current)
-          timeoutRef.current = setTimeout(() => setShowAlert(false), 3000)
+          if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current)
+
+          timeoutRef.current = setTimeout(() => {
+            setToastVisible(false)
+            fadeTimeoutRef.current = setTimeout(() => setShowAlert(false), 500)
+          }, 3000)
+
+          // Mostrar os cards expandidos e ativar temporizador para colapsar após 3s
+          setIsCollapsed(false);
+          if (collapseTimerRef.current) clearTimeout(collapseTimerRef.current);
+          collapseTimerRef.current = setTimeout(() => {
+            setIsCollapsed(true);
+          }, 3000);
         }
       }
     } catch (e) {}
@@ -62,7 +107,11 @@ export default function BaseCollection({
     if (isSelectionMode) {
       calculateRemaining()
       window.addEventListener("bundleStateUpdated", calculateRemaining)
-      return () => window.removeEventListener("bundleStateUpdated", calculateRemaining)
+      return () => {
+        window.removeEventListener("bundleStateUpdated", calculateRemaining)
+        if (timeoutRef.current) clearTimeout(timeoutRef.current)
+        if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current)
+      }
     }
   }, [isSelectionMode])
   
@@ -243,8 +292,8 @@ export default function BaseCollection({
 
       {/* Toast Alert */}
       {isSelectionMode && showAlert && packName && (
-        <div className="fixed bottom-4 right-4 z-[100] md:bottom-8 md:right-8 transition-opacity duration-500 animate-in fade-in slide-in-from-bottom-4">
-          <div role="alert" className="relative w-[320px] rounded-xl border border-gray-200 bg-white p-4 shadow-[0_8px_30px_rgb(0,0,0,0.12)] text-gray-900
+        <div className={`fixed top-14 left-1/2 -translate-x-1/2 z-[150] w-full max-w-[400px] px-4 transition-all duration-500 ease-in-out ${toastVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+          <div role="alert" className="relative w-full rounded-xl border border-gray-200 bg-white p-4 shadow-[0_10px_40px_rgba(0,0,0,0.1)] text-gray-900
                                        [&>svg~*]:pl-8 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-gray-900">
             <Info className="h-5 w-5" />
             <h5 className="mb-1 font-semibold leading-none tracking-tight text-sm">
@@ -257,6 +306,54 @@ export default function BaseCollection({
               }
             </div>
           </div>
+        </div>
+      )}
+      
+      {/* Mini Bundle Cards */}
+      {isSelectionMode && selectedImages.length > 0 && (
+        <div className="fixed bottom-28 right-6 z-[110] flex flex-col-reverse gap-4">
+          {selectedImages.map((img, index) => {
+            const isExpanded = !isCollapsed;
+            // A distância aproximada entre os cards é de ~74px (56px altura + 16px gap + 2px borda)
+            const collapseTranslate = isExpanded ? 0 : index * 74;
+            const opacity = isExpanded ? 1 : (index === 0 ? 1 : 0);
+            const pointerEvents = opacity === 0 ? 'none' : 'auto';
+
+            // No modo colapsado, o card base (index 0) exibe a última imagem e a contagem total
+            const displayImg = (index === 0 && !isExpanded) ? selectedImages[selectedImages.length - 1] : img;
+            const displayBadge = (index === 0 && !isExpanded) ? selectedCount : index + 1;
+
+            return (
+              <div 
+                key={index} 
+                className="bg-white border border-gray-300 rounded-xl p-1 shadow-[0_10px_40px_rgba(0,0,0,0.1)] relative animate-in fade-in slide-in-from-bottom-12 duration-500 ease-out transition-all"
+                style={{ 
+                  zIndex: 100 - index,
+                  transform: `translateY(${collapseTranslate}px)`,
+                  opacity: opacity,
+                  pointerEvents: pointerEvents
+                }}
+              >
+                <div className="h-12 w-12 relative">
+                  {displayImg ? (
+                    <img 
+                      src={displayImg} 
+                      alt={`Selected ${index + 1}`} 
+                      className="w-full h-full object-contain relative z-10"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-100 flex items-center justify-center text-[10px] text-gray-400 relative z-10">
+                      ?
+                    </div>
+                  )}
+                  {/* Quantity Badge - Top Left Absolute */}
+                  <div className="absolute -top-3 -left-3 bg-black text-white text-[12px] w-6 h-6 rounded-full flex items-center justify-center font-black border-2 border-white shadow-md z-20">
+                    {displayBadge}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
 

@@ -18,7 +18,7 @@ export default function ProductCardTPS({
   priority = false,
 }: ProductCardTPSProps) {
   const [imageError, setImageError] = useState(false);
-  const [selectionCount, setSelectionCount] = useState(0);
+  const [selectionIndices, setSelectionIndices] = useState<string>("");
   const pixel = usePixel();
 
   const calculateSelectionCount = () => {
@@ -27,8 +27,14 @@ export default function ProductCardTPS({
       if (stored) {
         const state = JSON.parse(stored);
         if (state && Array.isArray(state.selections)) {
-          const count = state.selections.filter((p: any) => p && p.id === product.id).length;
-          setSelectionCount(count);
+          // Get only non-null selections to determine continuous order
+          const nonNullSelections = state.selections.filter((p: any) => p);
+          
+          const indices = nonNullSelections
+            .map((p: any, idx: number) => (p.id === product.id ? idx + 1 : null))
+            .filter((idx) => idx !== null) as number[];
+
+          setSelectionIndices(indices.join(", "));
         }
       }
     } catch (e) { }
@@ -137,7 +143,8 @@ export default function ProductCardTPS({
       if (nextEmptySlot !== -1) {
         router.push(`/?bundleSlot=${nextEmptySlot}&returnTo=${encodeURIComponent(updatedReturnTo)}`, undefined, { shallow: true, scroll: false });
       } else {
-        router.push(updatedReturnTo);
+        const separator = updatedReturnTo.includes("?") ? "&" : "?";
+        router.push(`${updatedReturnTo}${separator}scroll=bundle`);
       }
     } else {
       handleViewContent();
@@ -192,7 +199,7 @@ export default function ProductCardTPS({
       className: "flex flex-col flex-grow text-left",
     }
     : {
-      href: `/products/${product.handle}`,
+      href: router.pathname === "/" ? `/products/${product.handle}?reset=true` : `/products/${product.handle}`,
       onClick: handleViewContent,
       className: "flex flex-col flex-grow",
       suppressHydrationWarning: true,
@@ -204,9 +211,9 @@ export default function ProductCardTPS({
       <CardWrapper {...(cardProps as any)}>
         {/* Image Container */}
         <div className="relative bg-white mb-3">
-          {selectionCount > 0 && isSelectionMode && (
-            <div className="absolute -top-2 -right-2 bg-black text-white w-7 h-7 rounded-full flex items-center justify-center font-bold text-sm shadow-md z-20 border-2 border-white">
-              {selectionCount}
+          {selectionIndices && isSelectionMode && (
+            <div className="absolute -top-2 -right-2 bg-black text-white w-7 h-7 rounded-full flex items-center justify-center font-bold text-[11px] shadow-md z-20 border-2 border-white">
+              {selectionIndices}
             </div>
           )}
           {/* Viewers Counter */}
@@ -274,9 +281,9 @@ export default function ProductCardTPS({
         <div className="w-full h-px bg-black mb-3"></div>
 
         {/* Product Info - flex grow para empurrar botão para baixo */}
-        <div className="text-center space-y-2 flex flex-col flex-grow">
+        <div className="text-center space-y-2 flex flex-col  flex-grow">
           {/* Product Name - full title from folder name */}
-          <h3 className="text-sm font-bold text-black leading-tight flex items-center justify-center text-center px-1">
+          <h3 className="text-sm font-bold text-black   inline-block leading-tight flex items-center justify-center text-center px-1">
             {product.title}
           </h3>
 
@@ -323,7 +330,7 @@ export default function ProductCardTPS({
             >
               SELECT
             </button>
-            {selectionCount > 0 && (
+            {selectionIndices !== "" && (
               <button
                 onClick={handleRemoveClick}
                 className="flex-1 bg-[#d4d4d4] rounded-[4px] text-black py-3 px-2 text-sm font-bold uppercase tracking-wide hover:bg-gray-300 transition-colors duration-200 text-center"
@@ -334,7 +341,7 @@ export default function ProductCardTPS({
           </div>
         ) : (
           <Link
-            href={`/products/${product.handle}`}
+            href={router.pathname === "/" ? `/products/${product.handle}?reset=true` : `/products/${product.handle}`}
             className="block w-full bg-black rounded-[4px] text-white py-3 text-x1 font-thin uppercase tracking-wide
                      hover:bg-gray-900 transition-colors duration-200 text-center"
             onClick={handleViewContent}
